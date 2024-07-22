@@ -1,0 +1,1 @@
+CREATE TABLE downloads (id VARCHAR(36), package VARCHAR(50), time TIMESTAMP, user_agent VARCHAR(100), origin_country VARCHAR(100), origin_city VARCHAR(100), origin_state VARCHAR(100), origin_company VARCHAR(100), origin_latitude NUMERIC, origin_longitude NUMERIC);

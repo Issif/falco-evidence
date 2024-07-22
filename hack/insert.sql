@@ -1,0 +1,1 @@
+INSERT INTO downloads SELECT id, package, time, user_agent, origin_country, origin_city, origin_company, origin_state, origin_latitude, origin_longitude FROM read_csv( 'data.csv');
