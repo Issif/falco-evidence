@@ -1,85 +1,122 @@
 ---
-title: Falco download stats
+title: Falco Docs stats
 ---
 
-# From <Value data={time_window_min} /> to <Value data={time_window_max} />
-
-## Downloads by package
-
-```sql time_window_min
-  select 
-    MIN(time) as min
-  from scarf.downloads
-  group by time
-```
-```sql time_window_max
-  select 
-    MAX(time)
-  from scarf.downloads
-  group by time
-```
-
-
-```sql count_by_package
-  select 
-    package as name,
-    COUNT(package) as value
-  from scarf.downloads
-  group by package
-```
-
-<ECharts config={
-    {
-        tooltip: {
-            formatter: '{b}: {c} ({d}%)'
-        },
-        series: [
-        {
-          type: 'pie',
-          data: [...count_by_package],
-        }
-      ]
-      }
-    }
+<DateRange
+    name=date_range
+    defaultValue={'Last 30 Days'}
 />
 
-## Downloads by hour
+# From {inputs.date_range.start} to {inputs.date_range.end}
 
-```sql count_by_package_by_hour
+## Top 10  pages
+
+```sql top_10_pages
   select 
-    date_trunc('hour', time) as hour,
-    package as package,
-    COUNT(package) as count
-  from scarf.downloads
-  group by hour, package
+    referer as page,
+    count(referer) as visits
+  from falco_docs.falco_docs
+  where time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}'
+  group by page
+  order by visits desc
+  limit 10
+```
+
+<BarChart 
+    data={top_10_pages}
+    x=page
+    y=visits 
+    swapXY=true
+/>
+
+## Visits by page
+
+```sql visits
+  select
+    count(*) as visits
+  from falco_docs.falco_docs
+  where time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}'
+```
+
+<BigValue 
+  data={visits} 
+  value=visits
+  fmt="%d.0"
+/>
+
+```sql visits_by_page
+  select 
+    referer as page,
+    count(referer) as visits
+  from falco_docs.falco_docs
+  where time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}'
+  group by page
+  order by visits desc
+```
+
+<DataTable data={visits_by_page}/>
+
+## Visits by day
+
+```sql visits_by_day
+  select 
+    date_trunc('day', time) as day,
+    COUNT(id) as visits
+  from falco_docs.falco_docs
+  where time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}'
+  group by day
+  order by visits desc
 ```
 
 <LineChart 
-    data={count_by_package_by_hour}
-    x=hour
-    y=count 
-    yAxisTitle="Dowload by hour"
-    series=package
+    data={visits_by_day}
+    x=day
+    y=visits 
+    yAxisTitle="Visits by day"
     step=true
 />
 
-## Downloads by origin
+<CalendarHeatmap 
+    data={visits_by_day}
+    date=day
+    value=visits
+    title="Calendar Heatmap"
+    subtitle="Daily visits"
+/>
 
-```sql origins
+
+## Visits by origin
+
+```sql count_by_origins
   select
-    COUNT(id) as count,
-    package as package,
-    origin_latitude as lat,
-    origin_longitude as long
-  from scarf.downloads
-  group by package, lat, long
+    origin_country as country,
+    COUNT(referer) as visits
+  from falco_docs.falco_docs
+  where (origin_country is not null and origin_city is not null) and (time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}')
+  group by country
+  order by visits desc
 ```
 
-<PointMap 
-    data={origins} 
+<DataTable data={count_by_origins}/>
+
+```sql lat_long_origins
+  select
+    COUNT(origin_city) as count,
+    origin_country as country,
+    origin_city as city,
+    origin_latitude as lat,
+    origin_longitude as long
+  from falco_docs.falco_docs
+  where (origin_country is not null and origin_city is not null) and (time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}')
+  group by lat, long, country, city
+```
+
+<BubbleMap 
+    data={lat_long_origins} 
     lat=lat 
     long=long 
-    value=count 
-    pointName=package
-    height=600
+    size=count
+    value=count
+    height=500
+    pointName=city
 />

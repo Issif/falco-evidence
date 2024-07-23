@@ -1,5 +1,0 @@
-# This file was automatically generated
-name: scarf
-type: duckdb
-options:
-  filename: scarf.duckdb

@@ -1,0 +1,1 @@
+select * from falco_docs where referer like 'https://falco.org/docs/%';

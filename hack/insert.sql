@@ -1,1 +1,1 @@
-INSERT INTO downloads SELECT id, package, time, user_agent, origin_country, origin_city, origin_company, origin_state, origin_latitude, origin_longitude FROM read_csv( 'data.csv');
+INSERT INTO falco_docs SELECT id, package, time, referer, user_agent, platform, origin_country, origin_city, origin_company, origin_state, origin_domain, origin_latitude, origin_longitude FROM read_csv( 'docs.csv');
