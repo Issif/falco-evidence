@@ -1,0 +1,5 @@
+# This file was automatically generated
+name: falco_website
+type: duckdb
+options:
+  filename: falco_website.duckdb

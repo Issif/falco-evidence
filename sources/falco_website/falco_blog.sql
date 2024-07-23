@@ -1,0 +1,1 @@
+select * from falco_blog where referer like 'https://falco.org/blog/%';

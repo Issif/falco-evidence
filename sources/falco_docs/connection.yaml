@@ -1,5 +1,0 @@
-# This file was automatically generated
-name: falco_docs
-type: duckdb
-options:
-  filename: falco_docs.duckdb

@@ -1,1 +1,0 @@
-select iso, name from countries;
