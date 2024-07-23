@@ -84,20 +84,25 @@ title: Falco Docs stats
     subtitle="Daily visits"
 />
 
-
 ## Visits by origin
 
 ```sql count_by_origins
   select
     origin_country as country,
-    COUNT(referer) as visits
+    COUNT(referer) as visits,
+    'https://flaglog.com/codes/standardized-rectangle-120px/' || iso || '.png' as flag
   from falco_docs.falco_docs
+  inner join falco_docs.countries on falco_docs.countries.name=falco_docs.falco_docs.origin_country;
   where (origin_country is not null and origin_city is not null) and (time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}')
-  group by country
+  group by country, iso
   order by visits desc
 ```
 
-<DataTable data={count_by_origins}/>
+<DataTable data={count_by_origins}>
+  <Column id=flag contentType=image height=30px align=center />
+	<Column id=country />
+	<Column id=visits />
+</DataTable>
 
 ```sql lat_long_origins
   select

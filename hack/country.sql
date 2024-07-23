@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS countries (id INTEGER, iso VARCHAR(2), name VARCHAR(100));
