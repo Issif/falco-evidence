@@ -9,9 +9,19 @@ title: Falco Docs stats
 
 # From {inputs.date_range.start} to {inputs.date_range.end}
 
-## Top 10  pages
+## Top {inputs.top_count.value} pages
 
-```sql top_10_pages
+<Dropdown name=top_count
+    defaultValue={(["20"])} 
+    title="top"
+>
+    <DropdownOption valueLabel=10 value=10/>
+    <DropdownOption valueLabel=20 value=20/>
+    <DropdownOption valueLabel=50 value=50/>
+    <DropdownOption valueLabel=100 value=100/>
+</Dropdown>
+
+```sql top_pages
   select 
     referer as page,
     count(referer) as visits
@@ -19,11 +29,11 @@ title: Falco Docs stats
   where time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}'
   group by page
   order by visits desc
-  limit 10
+  limit ${inputs.top_count.value}
 ```
 
 <BarChart 
-    data={top_10_pages}
+    data={top_pages}
     x=page
     y=visits 
     swapXY=true
@@ -54,8 +64,8 @@ title: Falco Docs stats
   order by visits desc
 ```
 
-<DataTable data={visits_by_page}/>
-
+<DataTable data={visits_by_page} totalRow=true rows=20/>
+ 
 ## Visits by day
 
 ```sql visits_by_day
@@ -86,7 +96,7 @@ title: Falco Docs stats
 
 ## Visits by origin
 
-```sql count_by_origins
+```sql counts_by_origin
   select
     origin_country as country,
     COUNT(referer) as visits,
@@ -98,7 +108,7 @@ title: Falco Docs stats
   order by visits desc
 ```
 
-<DataTable data={count_by_origins}>
+<DataTable data={counts_by_origin} rows=10>
   <Column id=flag contentType=image height=30px align=center />
 	<Column id=country />
 	<Column id=visits />
@@ -125,3 +135,25 @@ title: Falco Docs stats
     height=500
     pointName=city
 />
+
+## Visits by company
+
+```sql count_by_company
+  select
+    origin_company as company,
+    origin_country as country,
+    COUNT(referer) as visits,
+    'https://flaglog.com/codes/standardized-rectangle-120px/' || iso || '.png' as flag
+  from falco_website.falco_docs
+  inner join falco_website.countries on falco_website.countries.name=falco_website.falco_docs.origin_country;
+  where (origin_company is not null) and (time BETWEEN '${inputs.date_range.start}' AND '${inputs.date_range.end}')
+  group by company, country, iso
+  order by visits desc
+```
+
+<DataTable data={count_by_company}>
+  <Column id=flag contentType=image height=30px align=center />
+	<Column id=country />
+	<Column id=company />
+	<Column id=visits />
+</DataTable>
