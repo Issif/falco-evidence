@@ -64,7 +64,7 @@ title: Falco Docs stats
   order by visits desc
 ```
 
-<DataTable data={visits_by_page} totalRow=true rows=20/>
+<DataTable data={visits_by_page} totalRow=true search=true rows=20/>
  
 ## Visits by day
 
@@ -108,7 +108,7 @@ title: Falco Docs stats
   order by visits desc
 ```
 
-<DataTable data={counts_by_origin} rows=10>
+<DataTable data={counts_by_origin} search=true rows=10>
   <Column id=flag contentType=image height=30px align=center />
 	<Column id=country />
 	<Column id=visits />
@@ -151,7 +151,7 @@ title: Falco Docs stats
   order by visits desc
 ```
 
-<DataTable data={count_by_company}>
+<DataTable data={count_by_company} search=true>
   <Column id=flag contentType=image height=30px align=center />
 	<Column id=country />
 	<Column id=company />

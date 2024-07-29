@@ -1,0 +1,1 @@
+select * from falco_talon where referer like 'https://docs.falco-talon.org/%';
